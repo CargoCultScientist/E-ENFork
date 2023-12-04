@@ -67,3 +67,28 @@ Please cite our work if you use the code.
   year={2023}
 }
 ```
+
+
+## Additional comments on the fork:
+Thr program is focused on estimating Electric Network Frequency (ENF) fluctuations from event streams recorded by event cameras. This approach, referred to as E-ENF (Event-based ENF), is designed to overcome the limitations of conventional Video-based ENF (V-ENF) methods, especially in challenging environments. Let's synthesize how the scripts work together in the context of this study:
+
+### Objective of the Study
+- **ENF Estimation from Event Streams**: The primary aim is to estimate ENF fluctuations, which are implicit in the flickering of artificial lights, from the data captured by event cameras. Unlike traditional cameras that capture frame-based videos, event cameras record data as a stream of events based on changes in light intensity, providing high temporal resolution and dynamic range.
+
+### Role of Each Script in the Study:
+**Data Unpacking** (unpack and unpack_events_file Functions):
+These functions handle the extraction of event data from .aedat4 files.
+This data is crucial for the E-ENF estimation as it contains the high-resolution event information captured by the event cameras.
+
+**Event Data Processing** (Event_txt_loader Class):
+This class processes the unpacked event data, organizing it into a structured format. It is particularly useful for handling and analyzing the spatio-temporal characteristics of the events, which are key to understanding ENF fluctuations in different scenarios.
+
+**Visualization of Event Data** (event_timesurface Function and events2timesurfaces Function):
+These components are used to visualize the event data as time surface images. While this may not directly contribute to ENF estimation, it provides a valuable tool for analyzing and understanding the event data, which could be beneficial for validating and interpreting the results of the E-ENF method.
+Overall Functionality in the Context of the Study
+The program seems to form part of a larger system designed to implement the E-ENF estimation method. It likely fits into the initial stages of the E-ENF pipeline, where event data is extracted, processed, and potentially visualized for further analysis.
+The E-ENF method itself, which would include mode filtering and harmonic enhancement to extract ENF traces from event data, may be implemented in parts of the code not provided here. The provided scripts lay the groundwork for data handling and preliminary analysis.
+Application in the Study
+In the context of the Event-Video ENF Dataset (EV-ENFD) mentioned in the text above, these scripts could be used to process and analyze the event data captured under various conditions (static, dynamic, extreme lighting).
+This preprocessing is essential for the subsequent E-ENF analysis, where accurate ENF traces are extracted, especially in challenging conditions where V-ENF methods fall short.
+In summary, the scripts you've provided play a crucial role in handling, processing, and visualizing event data from neuromorphic sensors, setting the stage for advanced E-ENF analysis in various environmental conditions. This aligns with the study's goal of developing a robust method for ENF estimation using event-based camera data.

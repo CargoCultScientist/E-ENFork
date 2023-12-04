@@ -1,39 +1,34 @@
-import numpy as np
+import numpy as np  # Importing NumPy library for numerical operations
 import copy
 
-# #######IFtest is the estimated ENF
-# #######ENFdata is the reference ENF
 def MMSE(ConstFs, AStepSize, ENFData, IFtest, AWindowLength):
-    ENFData       = np.array(ENFData)
-    RecordLength  = len(IFtest)
-    ENFLength     = len(ENFData)
-    OverFact = AStepSize / ConstFs
-    MSECalibrated = np.ones(ENFLength-RecordLength)
+    ENFData = np.array(ENFData)  # Convert ENFData to a NumPy array
+    RecordLength = len(IFtest)  # Get the length of IFtest
+    ENFLength = len(ENFData)  # Get the length of ENFData
+    OverFact = AStepSize / ConstFs  # Calculate the overlap factor
+    MSECalibrated = np.ones(ENFLength - RecordLength)  # Initialize an array for storing mean square errors
+
+    # Comparing segments of the reference ENF data with the test data
     if ENFLength >= RecordLength:
-        for i in range(ENFLength-RecordLength):
-            IF0          = ENFData[i: i+RecordLength]
-            TempIF1      = copy.copy(IFtest)
-            TempIF1      = np.array(TempIF1)
-            bbb              = IF0-TempIF1
-            MSECalibrated[i] = np.linalg.norm(bbb)/RecordLength
-        m  = MSECalibrated
-        # ### Find the minimum index
-        min_score = m[0]
-        min_index1    = 0
-        for ii in range(ENFLength-RecordLength):
-            if m[ii] < min_score:
-                min_score     = m[ii]
-                min_index1    = ii
+        for i in range(ENFLength - RecordLength):
+            IF0 = ENFData[i: i + RecordLength]  # Extract a segment of reference ENF
+            TempIF1 = copy.copy(IFtest)  # Create a copy of IFtest
+            bbb = IF0 - TempIF1  # Calculate the difference between reference and test ENF
+            MSECalibrated[i] = np.linalg.norm(bbb) / RecordLength  # Calculate mean square error
 
-        FinalIndex = min_index1
+        # Finding the best match (minimum MSE)
+        min_score = min(MSECalibrated)  # Find the minimum mean square error
+        min_index1 = np.argmin(MSECalibrated)  # Find the index of the minimum error
+        FinalIndex = min_index1  # Get the final index of the best match
 
-        StartTimeIndex = int(OverFact * FinalIndex)
-        MinScore = min(MSECalibrated)
-        EndTimeIndex = int(StartTimeIndex + OverFact * RecordLength - OverFact)
-        StartSec = int(StartTimeIndex % 60)
-        StartMin = (StartTimeIndex - StartSec) / 60
-        EndSec = int(EndTimeIndex % 60)
-        EndMin = (EndTimeIndex - EndSec) / 60
-        CalibratedIF = ENFData[FinalIndex: FinalIndex+RecordLength]
+        # Calculating time indices and scores
+        StartTimeIndex = int(OverFact * FinalIndex)  # Calculate the start time index
+        MinScore = min_score  # Get the minimum score
+        EndTimeIndex = int(StartTimeIndex + OverFact * RecordLength - OverFact)  # Calculate the end time index
+        StartSec = int(StartTimeIndex % 60)  # Calculate start seconds
+        StartMin = (StartTimeIndex - StartSec) / 60  # Calculate start minutes
+        EndSec = int(EndTimeIndex % 60)  # Calculate end seconds
+        EndMin = (EndTimeIndex - EndSec) / 60  # Calculate end minutes
+        CalibratedIF = ENFData[FinalIndex: FinalIndex + RecordLength]  # Extract the calibrated IF segment
 
     return CalibratedIF, StartMin, StartSec, EndMin, EndSec, StartTimeIndex, EndTimeIndex, MinScore
